@@ -5,7 +5,7 @@
 
     <!-- Card Login -->
     <div
-      class="relative w-full max-w-2xl bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10 m-12"
+      class="relative w-full max-w-2xl bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10 mx-6 my-16"
     >
       <!-- Icon -->
       <div class="flex justify-center mb-6">
