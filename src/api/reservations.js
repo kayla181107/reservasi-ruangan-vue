@@ -1,15 +1,16 @@
-import api from './axios'
+import axios from './axios'
 
 export const reservations = {
-  all: (params = {}) => api.get('/reservations', { params }),
-
-  approve(id, reason) {
-    return api.put(`/reservations/${id}`, { status: 'approved', reason })
+  all() {
+    return axios.get('/reservations')
   },
-
+  approve(id, reason = '') {
+    return axios.put(`/admin/reservations/${id}/approve`, { reason })
+  },
   reject(id, reason) {
-    return api.put(`/reservations/${id}`, { status: 'rejected', reason })
+    return axios.put(`/admin/reservations/${id}/rejected`, { reason })
   },
-
-  destroy: (id) => api.delete(`/reservations/${id}`),
+  destroy(id) {
+    return axios.delete(`/admin/reservations/${id}`)
+  },
 }

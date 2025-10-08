@@ -5,7 +5,7 @@
 
     <!-- Card Login -->
     <div
-      class="relative w-full max-w-2xl bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10 mx-6 my-16"
+      class="relative w-full max-w-xl bg-white/90 backdrop-blur-xl p-8 md:p-10 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10 mx-4 my-12"
     >
       <!-- Icon -->
       <div class="flex justify-center mb-6">
@@ -30,18 +30,15 @@
       </div>
 
       <!-- Judul -->
-      <h1 class="text-3xl font-extrabold text-center text-blue-800 mb-2">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-center text-blue-800 mb-2">
         Reservasi Ruangan
       </h1>
-      <p class="text-2xl font-semibold text-center text-yellow-400 mb-4">
+      <p class="text-2xl md:text-3xl font-semibold text-center text-yellow-400 mb-3">
         Login
-      </p>
-      <p class="text-center text-sm text-blue-900 mb-6">
-        Masuk ke akun Anda untuk melanjutkan
       </p>
 
       <!-- Form -->
-      <form @submit.prevent="onLogin" class="space-y-4 max-w-xl mx-auto">
+      <form @submit.prevent="onLogin" class="space-y-4 max-w-md mx-auto">
         <!-- Email -->
         <div class="group">
           <label class="block text-sm font-medium mb-1 text-blue-800">Email</label>
@@ -77,11 +74,9 @@
         <!-- Button -->
         <button
           type="submit"
-          :disabled="loading"
-          class="w-full bg-gradient-to-r from-blue-500 via-purple-400 to-yellow-400 text-white py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 glow-button"
+          class="w-full bg-gradient-to-r from-blue-500 via-purple-400 to-yellow-400 text-white py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02] transition-all duration-300 glow-button"
         >
-          <span v-if="loading">Loading...</span>
-          <span v-else>Login</span>
+          Login
         </button>
       </form>
 
@@ -107,12 +102,10 @@ import api from "@/api/axios"
 const email = ref("")
 const password = ref("")
 const errorMessage = ref("")
-const loading = ref(false)
 const router = useRouter()
 
 const onLogin = async () => {
   errorMessage.value = ""
-  loading.value = true
   try {
     const res = await api.post("/login", {
       email: email.value,
@@ -131,8 +124,6 @@ const onLogin = async () => {
     errorMessage.value =
       err.response?.data?.message ||
       "Login gagal. Periksa email dan password!"
-  } finally {
-    loading.value = false
   }
 }
 </script>

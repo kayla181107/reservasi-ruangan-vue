@@ -28,7 +28,7 @@ const routes = [
     component: AdminLayout,
     meta: { requiresAuth: true },
     children: [
-      { path: '', name: 'Dashboard', component: DashboardView }, // ✅ fix di sini
+      { path: '', name: 'Dashboard', component: DashboardView }, 
       { path: 'rooms', name: 'Rooms', component: Rooms },
       { path: 'reservations', name: 'Reservations', component: Reservations },
       { path: 'fixed-schedules', name: 'FixedSchedules', component: FixedSchedules },
