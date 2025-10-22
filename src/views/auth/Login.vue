@@ -1,173 +1,177 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen relative overflow-hidden">
-    <!-- Background gradasi animasi -->
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 animate-bgMove"></div>
-
-    <!-- Card Login -->
+  <div class="min-h-screen flex justify-center items-center bg-white-100 py-10">
     <div
-      class="relative w-full max-w-xl bg-white/90 backdrop-blur-xl p-8 md:p-10 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10 mx-4 my-12"
+      class="bg-white w-[1100px] h-auto flex rounded-3xl shadow-xl overflow-hidden border border-gray-200"
     >
-      <!-- Icon -->
-      <div class="flex justify-center mb-6">
-        <div
-          class="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg animate-bounce-slow"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-12 h-12 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z"
-            />
-          </svg>
+      <!-- Bagian kiri: Form -->
+      <div
+        class="w-full md:w-1/2 flex flex-col justify-center items-center px-12 py-12"
+      >
+        <div class="w-full max-w-sm">
+          <!-- Judul -->
+          <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">
+            Login
+          </h2>
+          <p class="text-sm text-gray-500 text-center mb-8">
+            Masuk untuk memesan ruang pertemuan
+          </p>
+
+          <!-- Form -->
+          <form @submit.prevent="onLogin" class="space-y-6">
+            <!-- Username -->
+            <div>
+              <label
+                class="block text-sm font-semibold text-gray-800 mb-1"
+                for="username"
+              >
+                Username
+              </label>
+              <input
+                id="username"
+                v-model="email"
+                type="text"
+                placeholder="Username"
+                class="w-full border border-sky-600 rounded-md px-3 py-2 text-gray-800 focus:ring-2 focus:ring-sky-600 focus:outline-none transition"
+                required
+              />
+            </div>
+
+            <!-- Password -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-sm font-semibold text-gray-800"
+                  >Password</label
+                >
+                <a href="#" class="text-xs text-black hover:underline"
+                  >Forgot your password?</a
+                >
+              </div>
+              <input
+                v-model="password"
+                type="password"
+                placeholder="Password"
+                class="w-full border border-sky-600 rounded-md px-3 py-2 text-gray-800 focus:ring-2 focus:ring-sky-600 focus:outline-none transition"
+                required
+              />
+            </div>
+
+            <!-- Pesan Error -->
+            <p
+              v-if="errorMessage"
+              class="text-red-500 text-sm text-center font-medium"
+            >
+              {{ errorMessage }}
+            </p>
+
+            <!-- Tombol Login -->
+            <button
+              type="submit"
+              class="w-full bg-sky-800 hover:bg-sky-700 text-white font-semibold py-2 rounded-md transition-all duration-300"
+            >
+              Login
+            </button>
+
+          
+
+            <!-- Tombol Sosial -->
+            <div class="flex space-x-3">
+              <button
+                type="button"
+                class="flex-1 border border-gray-300 rounded-md py-2 text-sm flex justify-center items-center hover:bg-gray-50 transition"
+              >
+                <img
+                  src="/images/google.jpg"
+                  class="w-5 h-5 mr-2"
+                  alt="Google"
+                />
+                Login with Google
+              </button>
+
+              <button
+                type="button"
+                class="flex-1 border border-gray-300 rounded-md py-2 text-sm flex justify-center items-center hover:bg-gray-50 transition"
+              >
+                <img
+                  src="/images/apple.jpg"
+                  class="w-5 h-5 mr-2"
+                  alt="Apple"
+                />
+                Login with Apple
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
-      <!-- Judul -->
-      <h1 class="text-3xl md:text-4xl font-extrabold text-center text-blue-800 mb-2">
-        Reservasi Ruangan
-      </h1>
-      <p class="text-2xl md:text-3xl font-semibold text-center text-yellow-400 mb-3">
-        Login
-      </p>
-
-      <!-- Form -->
-      <form @submit.prevent="onLogin" class="space-y-4 max-w-md mx-auto">
-        <!-- Email -->
-        <div class="group">
-          <label class="block text-sm font-medium mb-1 text-blue-800">Email</label>
-          <input
-            v-model="email"
-            type="email"
-            placeholder="Masukkan email"
-            class="w-full border border-white/30 bg-white/80 text-blue-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:border-yellow-400 focus:outline-none placeholder-blue-300 transition"
-            required
-          />
-        </div>
-
-        <!-- Password -->
-        <div class="group">
-          <label class="block text-sm font-medium mb-1 text-blue-800">Password</label>
-          <input
-            v-model="password"
-            type="password"
-            placeholder="Masukkan password"
-            class="w-full border border-white/30 bg-white/80 text-blue-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:border-yellow-400 focus:outline-none placeholder-blue-300 transition"
-            required
-          />
-        </div>
-
-        <!-- Error -->
-        <p
-          v-if="errorMessage"
-          class="text-red-500 text-sm text-center font-medium animate-shake"
-        >
-          {{ errorMessage }}
-        </p>
-
-        <!-- Button -->
-        <button
-          type="submit"
-          class="w-full bg-gradient-to-r from-blue-500 via-purple-400 to-yellow-400 text-white py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02] transition-all duration-300 glow-button"
-        >
-          Login
-        </button>
-      </form>
-
-      <!-- Register -->
-      <p class="text-sm text-center mt-6 text-blue-800">
-        Belum punya akun?
-        <router-link
-          to="/register"
-          class="text-yellow-400 font-medium hover:underline hover:text-purple-400"
-        >
-          Daftar disini
-        </router-link>
-      </p>
+      <!-- Bagian kanan: Gambar -->
+      <div class="hidden md:flex w-1/2 items-center justify-center p-10">
+        <img
+          src="/images/ruangan.jpg"
+          alt="Meeting Room"
+          class="rounded-3xl w-full h-[550px] object-cover object-[35%]"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
-import { useRouter } from "vue-router"
-import api from "@/api/axios"
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import api from "@/api/axios";
 
-const email = ref("")
-const password = ref("")
-const errorMessage = ref("")
-const router = useRouter()
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const router = useRouter();
 
 const onLogin = async () => {
-  errorMessage.value = ""
+  errorMessage.value = "";
   try {
     const res = await api.post("/login", {
       email: email.value,
       password: password.value,
-    })
+    });
 
-    const token = res.data?.data?.token
+    const token = res.data?.data?.token;
     if (token) {
-      localStorage.setItem("token", token)
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`
-      router.push("/admin")
+      localStorage.setItem("token", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      router.push("/admin");
     } else {
-      errorMessage.value = "Token tidak ditemukan di respons API!"
+      errorMessage.value = "Token tidak ditemukan di respons API!";
     }
   } catch (err) {
     errorMessage.value =
       err.response?.data?.message ||
-      "Login gagal. Periksa email dan password!"
+      "Login gagal. Periksa email dan password!";
   }
-}
+};
 </script>
 
 <style scoped>
-/* Fade In Card */
+body {
+  font-family: "Inter", sans-serif;
+}
+
+/* Efek hover */
+button {
+  transition: all 0.3s ease;
+}
+
+/* Animasi fade in */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fadeIn { animation: fadeIn 1s ease-in-out; }
-
-/* Bounce Icon */
-@keyframes bounceSlow {
-  0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}
-}
-.animate-bounce-slow { animation: bounceSlow 3s infinite; }
-
-/* Shake Error */
-@keyframes shake {
-  0%,100%{transform:translateX(0);}
-  20%{transform:translateX(-5px);}
-  40%{transform:translateX(5px);}
-  60%{transform:translateX(-5px);}
-  80%{transform:translateX(5px);}
-}
-.animate-shake { animation: shake 0.4s ease-in-out; }
-
-/* Glow Button */
-.glow-button {
-  box-shadow: 0 0 8px rgba(255,255,0,0.6), 0 0 15px rgba(128,0,255,0.4);
-}
-.glow-button:hover {
-  box-shadow: 0 0 12px rgba(255,255,0,0.8), 0 0 20px rgba(128,0,255,0.6);
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Background Horizontal Move Animation */
-@keyframes bgMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.animate-bgMove {
-  background-size: 200% 200%;
-  animation: bgMove 15s linear infinite;
+div {
+  animation: fadeIn 0.6s ease-out;
 }
 </style>

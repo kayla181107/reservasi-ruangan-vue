@@ -1,58 +1,54 @@
 <template>
   <div
-    class="w-64 h-screen flex flex-col shadow-xl border-r border-white/20 animate-slideIn
-           bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 text-white"
+    class="w-65 h-screen flex flex-col shadow-lg border-r border-gray-200 bg-[#0B5C75] text-white transition-all duration-500 ease-in-out"
   >
-    <!-- Logo -->
-    <div class="p-6 border-b border-white/20">
-      <h2 class="text-2xl font-extrabold text-white">Admin </h2>
-    </div>
+    
 
     <!-- Navigation -->
-    <nav class="flex-1 p-4 space-y-2">
+    <nav class="flex-1 p-4 space-y-1">
       <router-link
         to="/admin"
-        class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/20 group"
-        active-class="bg-white/30 font-semibold shadow-sm"
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-[#09495E] group"
+        active-class="bg-[#09495E] font-semibold"
       >
-        <HomeIcon class="w-5 h-5 mr-3 text-white group-hover:scale-110 transition" />
+        <HomeIcon class="w-5 h-5 mr-3 text-white" />
         Dashboard
       </router-link>
 
       <router-link
-        to="/admin/rooms"
-        class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/20 group"
-        active-class="bg-white/30 font-semibold shadow-sm"
+        to="/admin/reservations"
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-[#09495E] group"
+        active-class="bg-[#09495E] font-semibold"
       >
-        <BuildingOfficeIcon class="w-5 h-5 mr-3 text-white group-hover:scale-110 transition" />
-        Rooms
+        <CalendarDaysIcon class="w-5 h-5 mr-3 text-white" />
+        Reservasi
       </router-link>
 
       <router-link
-        to="/admin/reservations"
-        class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/20 group"
-        active-class="bg-white/30 font-semibold shadow-sm"
+        to="/admin/rooms"
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-[#09495E] group"
+        active-class="bg-[#09495E] font-semibold"
       >
-        <CalendarDaysIcon class="w-5 h-5 mr-3 text-white group-hover:rotate-12 transition" />
-        Reservations
+        <BuildingOfficeIcon class="w-5 h-5 mr-3 text-white" />
+        Ruangan
+      </router-link>
+
+      <router-link
+        to="/admin/users"
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-[#09495E] group"
+        active-class="bg-[#09495E] font-semibold"
+      >
+        <UserIcon class="w-5 h-5 mr-3 text-white" />
+        User
       </router-link>
 
       <router-link
         to="/admin/fixed-schedules"
-        class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/20 group"
-        active-class="bg-white/30 font-semibold shadow-sm"
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 hover:bg-[#09495E] group"
+        active-class="bg-[#09495E] font-semibold"
       >
-        <ClockIcon class="w-5 h-5 mr-3 text-white group-hover:rotate-12 transition" />
-        Fixed Schedules
-      </router-link>
-
-      <router-link
-        to="/admin/profile"
-        class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/20 group"
-        active-class="bg-white/30 font-semibold shadow-sm"
-      >
-        <UserIcon class="w-5 h-5 mr-3 text-white group-hover:scale-110 transition" />
-        Profile
+        <ClockIcon class="w-5 h-5 mr-3 text-white" />
+        Jadwal Tetap
       </router-link>
     </nav>
 
@@ -60,7 +56,7 @@
     <div class="p-4 border-t border-white/20">
       <button
         @click="logout"
-        class="flex items-center w-full px-4 py-3 rounded-xl bg-rose-500 text-white shadow-md transition-all duration-300 ease-in-out hover:bg-rose-600 hover:scale-[1.02] active:scale-95"
+        class="flex items-center w-full px-4 py-3 rounded-lg bg-rose-500 text-white shadow-md hover:bg-rose-600 transition-all duration-300"
       >
         <ArrowRightOnRectangleIcon class="w-5 h-5 mr-3" />
         Logout
