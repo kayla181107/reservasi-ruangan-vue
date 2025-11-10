@@ -1,150 +1,67 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-6">
-    <!-- Card Utama -->
-    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl p-8">
+  <div class="min-h-screen bg-white p-6">
+    <div class="max-w-7xl mx-auto">
+
       <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <CalendarDays class="w-6 h-6 text-blue-600" />
-          Fixed Schedules
-        </h2>
-        <button
-          @click="openForm()"
-          class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow transition"
+      <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6 shadow-lg shadow-gray-300/70">
+        <h1 class="text-3xl font-bold text-gray-900">Jadwal Tetap</h1>
+      </div>
+
+      <!-- Tombol Tambah -->
+      <div class="flex items-center mb-6">
+        <router-link
+          to="/admin/tambah-fixed-schedule"
+          class="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold px-4 py-2 rounded-md shadow transition"
         >
-          <Plus class="w-4 h-4" /> Add Schedule
-        </button>
+          <CalendarPlus class="w-5 h-5" />
+          Tambah
+        </router-link>
       </div>
 
-      <!-- Tabel -->
-      <div class="overflow-hidden border border-gray-200 rounded-2xl">
-        <table class="w-full text-left">
-          <thead class="bg-gray-50 border-b text-gray-600 text-sm">
-            <tr>
-              <th class="p-3">Room</th>
-              <th class="p-3">Day</th>
-              <th class="p-3">Time</th>
-              <th class="p-3">Description</th>
-              <th class="p-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="s in schedules"
-              :key="s.id"
-              class="border-b hover:bg-gray-50 transition"
+      <!-- List Jadwal -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div
+          v-for="s in schedules"
+          :key="s.id"
+          class="bg-white rounded-lg border border-gray-200 shadow-md p-4 hover:shadow-lg transition"
+        >
+          <h3 class="text-lg font-semibold text-gray-800 mb-1">
+            {{ s.room?.name || 'Tanpa Ruangan' }}
+          </h3>
+          <p class="text-sm text-gray-700">
+            <span class="font-medium">Hari:</span>
+            {{ s.day_of_week }}
+          </p>
+          <p class="text-sm text-gray-700">
+            <span class="font-medium">Waktu:</span>
+            {{ formatTime(s.start_time) }} - {{ formatTime(s.end_time) }}
+          </p>
+          <p class="text-sm text-gray-700 mt-1">
+            <span class="font-medium">Keterangan:</span>
+            {{ s.description || '-' }}
+          </p>
+
+          <div class="flex justify-center gap-3 mt-5">
+            <router-link
+              :to="`/admin/edit-fixed-schedule/${s.id}`"
+              class="bg-green-500 hover:bg-green-600 text-white px-8 py-1 rounded-full text-sm font-medium shadow-sm transition"
             >
-              <td class="p-3">{{ s.room?.name }}</td>
-              <td class="p-3 capitalize">{{ s.day_of_week }}</td>
-              <td class="p-3">
-                {{ formatTime(s.start_time) }} - {{ formatTime(s.end_time) }}
-              </td>
-              <td class="p-3">{{ s.description || '-' }}</td>
-              <td class="p-3 text-right space-x-2">
-                <!-- Tombol Edit -->
-                <button
-                  @click="openForm(s)"
-                  class="inline-flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-lg transition"
-                >
-                  <Edit class="w-4 h-4" />
-                </button>
-
-                <!-- Tombol Hapus -->
-                <button
-                  @click="remove(s.id)"
-                  class="inline-flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1 rounded-lg transition"
-                >
-                  <Trash class="w-4 h-4" />
-                </button>
-              </td>
-            </tr>
-
-            <tr v-if="schedules.length === 0">
-              <td colspan="5" class="p-6 text-center text-gray-500">
-                Belum ada jadwal tetap.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <div
-      v-if="showForm"
-      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-    >
-      <div
-        class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 animate-fade-in"
-      >
-        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-          {{ form.id ? 'Edit Schedule' : 'Add Schedule' }}
-        </h3>
-
-        <div class="space-y-3">
-          <!-- Ruangan -->
-          <select
-            v-model="form.room_id"
-            class="w-full border border-gray-300 rounded-xl p-2 focus:ring-2 focus:ring-blue-400"
-          >
-            <option disabled value="">-- Pilih Ruangan --</option>
-            <option v-for="r in roomsList" :key="r.id" :value="r.id">
-              {{ r.name }}
-            </option>
-          </select>
-
-          <!-- Hari -->
-          <select
-            v-model="form.day_of_week"
-            class="w-full border border-gray-300 rounded-xl p-2 focus:ring-2 focus:ring-blue-400"
-          >
-            <option disabled value="">-- Pilih Hari --</option>
-            <option value="Senin">Senin</option>
-            <option value="Selasa">Selasa</option>
-            <option value="Rabu">Rabu</option>
-            <option value="Kamis">Kamis</option>
-            <option value="Jumat">Jumat</option>
-            <option value="Sabtu">Sabtu</option>
-            <option value="Minggu">Minggu</option>
-          </select>
-
-          <!-- Jam -->
-          <div class="flex gap-3">
-            <input
-              v-model="form.start_time"
-              type="time"
-              class="w-1/2 border border-gray-300 rounded-xl p-2 focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              v-model="form.end_time"
-              type="time"
-              class="w-1/2 border border-gray-300 rounded-xl p-2 focus:ring-2 focus:ring-blue-400"
-            />
+              Edit
+            </router-link>
+            <button
+              @click="remove(s.id)"
+              class="bg-red-500 hover:bg-red-600 text-white px-8 py-1 rounded-full text-sm font-medium shadow-sm transition"
+            >
+              Hapus
+            </button>
           </div>
-
-          <!-- Keterangan -->
-          <textarea
-            v-model="form.description"
-            rows="3"
-            placeholder="Keterangan (opsional)"
-            class="w-full border border-gray-300 rounded-xl p-2 focus:ring-2 focus:ring-blue-400"
-          ></textarea>
         </div>
 
-        <!-- Tombol -->
-        <div class="flex justify-end gap-3 mt-6">
-          <button
-            @click="showForm = false"
-            class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-          >
-            Batal
-          </button>
-          <button
-            @click="save"
-            class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow transition"
-          >
-            Simpan
-          </button>
+        <div
+          v-if="schedules.length === 0"
+          class="col-span-full text-center text-gray-500 py-10"
+        >
+          Belum ada jadwal tetap.
         </div>
       </div>
     </div>
@@ -154,80 +71,65 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { Edit, Trash, Plus, CalendarDays } from 'lucide-vue-next'
+import Swal from 'sweetalert2'
+import { CalendarPlus } from 'lucide-vue-next'
 
 const schedules = ref([])
 const roomsList = ref([])
-const showForm = ref(false)
-const form = ref({
-  id: null,
-  room_id: '',
-  day_of_week: '',
-  start_time: '',
-  end_time: '',
-  description: '',
-})
 
-// Ambil semua data
 async function fetchData() {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
 
-  const res = await axios.get('http://127.0.0.1:8000/api/fixed-schedules', { headers })
-  schedules.value = res.data.data || res.data
-
-  const r = await axios.get('http://127.0.0.1:8000/api/rooms', { headers })
-  roomsList.value = r.data.data || r.data
-}
-
-// Simpan (create/update)
-async function save() {
-  const token = localStorage.getItem('token')
-  const headers = { Authorization: `Bearer ${token}` }
-
-  const payload = {
-    room_id: form.value.room_id,
-    day_of_week: form.value.day_of_week,
-    start_time: form.value.start_time,
-    end_time: form.value.end_time,
-    description: form.value.description || null,
-  }
-
   try {
-    if (form.value.id) {
-      await axios.put(`http://127.0.0.1:8000/api/admin/fixed-schedules/${form.value.id}`, payload, { headers })
-    } else {
-      await axios.post('http://127.0.0.1:8000/api/admin/fixed-schedules', payload, { headers })
-    }
+    Swal.fire({
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    })
 
-    showForm.value = false
-    fetchData()
-  } catch (error) {
-    console.error('Error response:', error.response?.data || error.message)
-    alert(error.response?.data?.message || 'Gagal menyimpan jadwal!')
+    const res = await axios.get('http://127.0.0.1:8000/api/fixed-schedules', { headers })
+    schedules.value = res.data.data || res.data
+
+    const r = await axios.get('http://127.0.0.1:8000/api/rooms', { headers })
+    roomsList.value = r.data.data || r.data
+
+    Swal.close()
+  } catch (err) {
+    console.error('Gagal fetch data:', err)
+    Swal.fire('Gagal', 'Gagal mengambil data jadwal tetap.', 'error')
   }
 }
 
-// Hapus
 async function remove(id) {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
 
-  if (confirm('Yakin ingin menghapus jadwal ini?')) {
+  if (!confirm('Yakin ingin menghapus jadwal ini?')) return
+
+  try {
+    Swal.fire({
+      title: 'Memproses...',
+      text: 'Sedang menghapus jadwal.',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    })
+
     await axios.delete(`http://127.0.0.1:8000/api/fixed-schedules/${id}`, { headers })
+
+    await Swal.fire({
+      title: 'Jadwal Tetap tersebut telah berhasil dihapus.',
+      confirmButtonText: 'Oke',
+      confirmButtonColor: '#006989',
+      icon: 'success',
+    })
+
     fetchData()
+  } catch (err) {
+    console.error('Gagal hapus jadwal:', err)
+    Swal.fire('Gagal', 'Gagal menghapus jadwal!', 'error')
   }
 }
 
-// Modal buka/edit
-function openForm(s = null) {
-  form.value = s
-    ? { ...s }
-    : { id: null, room_id: '', day_of_week: '', start_time: '', end_time: '', description: '' }
-  showForm.value = true
-}
-
-// Helper format waktu
 function formatTime(t) {
   return t ? t.slice(0, 5) : ''
 }

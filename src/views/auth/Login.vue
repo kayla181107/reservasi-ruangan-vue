@@ -3,12 +3,10 @@
     <div
       class="bg-white w-[1100px] h-auto flex rounded-3xl shadow-xl overflow-hidden border border-gray-200"
     >
-      <!-- Bagian kiri: Form -->
       <div
         class="w-full md:w-1/2 flex flex-col justify-center items-center px-12 py-12"
       >
         <div class="w-full max-w-sm">
-          <!-- Judul -->
           <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">
             Login
           </h2>
@@ -16,9 +14,7 @@
             Masuk untuk memesan ruang pertemuan
           </p>
 
-          <!-- Form -->
           <form @submit.prevent="onLogin" class="space-y-6">
-            <!-- Username -->
             <div>
               <label
                 class="block text-sm font-semibold text-gray-800 mb-1"
@@ -36,7 +32,6 @@
               />
             </div>
 
-            <!-- Password -->
             <div>
               <div class="flex justify-between items-center mb-1">
                 <label class="block text-sm font-semibold text-gray-800"
@@ -55,7 +50,6 @@
               />
             </div>
 
-            <!-- Pesan Error -->
             <p
               v-if="errorMessage"
               class="text-red-500 text-sm text-center font-medium"
@@ -63,7 +57,6 @@
               {{ errorMessage }}
             </p>
 
-            <!-- Tombol Login -->
             <button
               type="submit"
               class="w-full bg-sky-800 hover:bg-sky-700 text-white font-semibold py-2 rounded-md transition-all duration-300"
@@ -73,7 +66,6 @@
 
           
 
-            <!-- Tombol Sosial -->
             <div class="flex space-x-3">
               <button
                 type="button"
@@ -103,7 +95,6 @@
         </div>
       </div>
 
-      <!-- Bagian kanan: Gambar -->
       <div class="hidden md:flex w-1/2 items-center justify-center p-10">
         <img
           src="/images/ruangan.jpg"
@@ -154,12 +145,10 @@ body {
   font-family: "Inter", sans-serif;
 }
 
-/* Efek hover */
 button {
   transition: all 0.3s ease;
 }
 
-/* Animasi fade in */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -26,7 +26,7 @@ const error = ref('')
 const handleLogin = async () => {
   const success = await auth.login(email.value, password.value)
   if (success) {
-    router.push('/rooms') // setelah login ke halaman rooms
+    router.push('/rooms') 
   } else {
     error.value = 'Email atau password salah!'
   }

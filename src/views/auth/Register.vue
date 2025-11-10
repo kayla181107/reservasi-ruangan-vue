@@ -1,13 +1,10 @@
 <template>
   <div class="flex items-center justify-center min-h-screen relative overflow-hidden px-4 md:px-8 py-12 md:py-16">
-    <!-- Background gradasi animasi -->
     <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 animate-bgMove"></div>
 
-    <!-- Card Register -->
     <div
       class="relative w-full max-w-3xl bg-white/95 backdrop-blur-xl p-8 md:p-12 rounded-2xl shadow-2xl border border-white/30 animate-fadeIn z-10"
     >
-      <!-- Icon -->
       <div class="flex justify-center mb-6">
         <div
           class="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg animate-bounce-slow"
@@ -29,7 +26,6 @@
         </div>
       </div>
 
-      <!-- Judul -->
       <h1 class="text-3xl md:text-4xl font-extrabold text-center text-blue-800 mb-2">
         Reservasi Ruangan
       </h1>
@@ -37,9 +33,7 @@
         Register
       </p>
 
-      <!-- Form -->
       <form @submit.prevent="onRegister" class="space-y-4">
-        <!-- Nama -->
         <div class="group">
           <label class="block text-sm md:text-base font-medium mb-1 text-blue-800">Nama</label>
           <input
@@ -51,7 +45,6 @@
           />
         </div>
 
-        <!-- Email -->
         <div class="group">
           <label class="block text-sm md:text-base font-medium mb-1 text-blue-800">Email</label>
           <input
@@ -63,7 +56,6 @@
           />
         </div>
 
-        <!-- Password -->
         <div class="group">
           <label class="block text-sm md:text-base font-medium mb-1 text-blue-800">Password</label>
           <input
@@ -75,7 +67,6 @@
           />
         </div>
 
-        <!-- Konfirmasi Password -->
         <div class="group">
           <label class="block text-sm md:text-base font-medium mb-1 text-blue-800">Konfirmasi Password</label>
           <input
@@ -87,7 +78,6 @@
           />
         </div>
 
-        <!-- Error -->
         <p
           v-if="errorMessage"
           class="text-red-500 text-sm md:text-base text-center font-medium animate-shake"
@@ -95,7 +85,6 @@
           {{ errorMessage }}
         </p>
 
-        <!-- Button -->
         <button
           type="submit"
           class="w-full bg-gradient-to-r from-blue-500 via-purple-400 to-yellow-400 text-white py-3 md:py-3.5 rounded-xl font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02] transition-all duration-300 glow-button"
@@ -154,23 +143,18 @@ const onRegister = async () => {
 </script>
 
 <style scoped>
-/* Fade In Card */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fadeIn { animation: fadeIn 1s ease-in-out; }
 
-/* Bounce Icon */
 @keyframes bounceSlow { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
 .animate-bounce-slow { animation: bounceSlow 3s infinite; }
 
-/* Shake Error */
 @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-5px);} 40%{transform:translateX(5px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
 .animate-shake { animation: shake 0.4s ease-in-out; }
 
-/* Glow Button */
 .glow-button { box-shadow: 0 0 8px rgba(255,255,0,0.6), 0 0 15px rgba(128,0,255,0.4); }
 .glow-button:hover { box-shadow: 0 0 12px rgba(255,255,0,0.8), 0 0 20px rgba(128,0,255,0.6); }
 
-/* Background Horizontal Move Animation */
 @keyframes bgMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 .animate-bgMove { background-size: 200% 200%; animation: bgMove 15s linear infinite; }
 </style>

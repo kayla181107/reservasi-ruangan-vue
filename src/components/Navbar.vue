@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex items-center justify-between px-8 py-4 bg-white shadow-sm border-b border-gray-100"
+    class="flex items-center justify-between px-7 py-2 bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50"
   >
     <!-- Kiri: Hamburger + Logo -->
     <div class="flex items-center gap-6">
@@ -24,37 +24,35 @@
         </svg>
       </button>
 
-      <!-- Logo -->
-      <img
-        src="/images/logo.jpg"
-        alt="logo"
-        class="h-25 w-auto object-contain"
-      />
+      <div class="flex items-center gap-2">
+        <img
+          src="/images/logo.jpg"
+          alt="logo"
+          class="h-23 w-auto object-contain"
+        />
+        
+      </div>
     </div>
 
-    <!-- Kanan: Profil -->
     <router-link
       to="/admin/profile"
       class="flex items-center gap-3 bg-gray-100 px-5 py-3 rounded-xl shadow-sm hover:bg-gray-200 transition-all"
     >
-      <!-- Foto profil user -->
-      <div v-if="profile.photo" class="w-11 h-11">
+      <div v-if="profile.photo" class="w-10 h-10">
         <img
           :src="profile.photo"
           alt="Foto Profil"
-          class="w-11 h-11 rounded-full object-cover border border-gray-300"
+          class="w-10 h-10 rounded-full object-cover border border-gray-300"
         />
       </div>
 
-      <!-- Kalau belum ada foto profil -->
       <div
         v-else
-        class="w-11 h-11 rounded-full bg-[#0B5C75] text-white flex items-center justify-center text-base font-bold"
+        class="w-10 h-10 rounded-full bg-[#0B5C75] text-white flex items-center justify-center text-sm font-bold"
       >
         {{ profileInitial }}
       </div>
 
-      <!-- Nama user yang login -->
       <span class="text-[#0B5C75] text-base font-semibold capitalize">
         Hi, {{ profile.name }}
       </span>
@@ -71,24 +69,15 @@ const profile = ref({
   photo: "",
 });
 
-const profileInitial = computed(() => {
-  return profile.value.name
-    ? profile.value.name.charAt(0).toUpperCase()
-    : "-";
-});
+const profileInitial = computed(() =>
+  profile.value.name ? profile.value.name.charAt(0).toUpperCase() : "-"
+);
 
 onMounted(async () => {
   try {
-    // 🔥 Ambil data profil user dari backend
-    const res = await api.get("/user/profile");
-
-    // Sesuaikan struktur JSON respons dari backend kamu
-    // Misal { data: { name: "Kayla", photo: "profil.jpg" } }
+    const res = await api.get("/profile");
     profile.value = {
-      name:
-        res.data?.data?.name ||
-        res.data?.name ||
-        "",
+      name: res.data?.data?.name || res.data?.name || "",
       photo: res.data?.data?.photo
         ? res.data.data.photo.startsWith("http")
           ? res.data.data.photo
@@ -96,18 +85,12 @@ onMounted(async () => {
         : "",
     };
 
-    // Simpan nama ke localStorage agar tetap tampil saat refresh
     if (profile.value.name) {
       localStorage.setItem("user_name", profile.value.name);
     }
   } catch (error) {
-    console.error("Gagal memuat profil user:", error);
-
-    // Kalau API gagal, ambil nama terakhir dari localStorage
     const storedName = localStorage.getItem("user_name");
-    if (storedName) {
-      profile.value.name = storedName;
-    }
+    if (storedName) profile.value.name = storedName;
   }
 });
 </script>

@@ -1,130 +1,136 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6">
-    <div class="max-w-6xl mx-auto">
+  <div class="min-h-screen bg-white p-6">
+    <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 
-              00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span>Daftar Reservasi</span>
-        </h2>
-
-        <button
-          @click="fetchData"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md transition-all duration-150 flex items-center gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M4 4v5h.582M20 20v-5h-.581M4 9h16M4 15h16M12 4v16" />
-          </svg>
-          Refresh
-        </button>
+      <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6 shadow-lg shadow-gray-300/70">
+        <h1 class="text-3xl font-bold text-gray-900">Daftar Reservasi</h1>
       </div>
 
-      <!-- Empty State -->
-      <div
-        v-if="!reservationsList.length"
-        class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-10 text-center text-gray-500"
-      >
-        <p class="text-lg font-medium">Belum ada reservasi ditemukan</p>
+      <!-- Filter -->
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <div class="relative">
+          <select
+            v-model="selectedRoom"
+            class="bg-[#005f73] text-white px-4 py-2 rounded-md font-medium shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none"
+          >
+            <option value="">Ruangan</option>
+            <option v-for="room in roomOptions" :key="room.id" :value="room.id">
+              {{ room.nama_ruangan || room.name || room.room_name || `Ruangan #${room.id}` }}
+            </option>
+          </select>
+        </div>
+
+        <div class="relative">
+          <select
+            v-model="selectedStatus"
+            class="bg-[#005f73] text-white px-4 py-2 rounded-md font-medium shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none"
+          >
+            <option value="">Status</option>
+            <option value="approved">Disetujui</option>
+            <option value="pending">Menunggu</option>
+            <option value="rejected">Ditolak</option>
+          </select>
+        </div>
+
+        <div class="relative">
+          <input
+            type="date"
+            v-model="selectedDate"
+            class="bg-[#005f73] text-white px-4 py-2 rounded-md font-medium shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none"
+          />
+        </div>
+
+        <button
+          @click="exportReport"
+          class="bg-[#005f73] text-white px-4 py-2 rounded-md font-medium shadow-sm hover:bg-[#004c5b] transition"
+        >
+          Export laporan (CSV/Excel)
+        </button>
       </div>
 
       <!-- Table -->
       <div
-        v-else
-        class="overflow-x-auto bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-indigo-100"
+        v-if="filteredReservations.length"
+        class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm"
       >
-        <table class="w-full text-left border-collapse">
-          <thead class="bg-indigo-50/70 text-indigo-700 text-sm uppercase tracking-wide">
+        <table class="min-w-full text-left border-collapse">
+          <thead class="bg-[#005f73] text-white">
             <tr>
-              <th class="p-3 font-semibold">User</th>
-              <th class="p-3 font-semibold">Ruangan</th>
               <th class="p-3 font-semibold">Tanggal</th>
-              <th class="p-3 font-semibold">Hari</th>
+              <th class="p-3 font-semibold">Ruangan</th>
               <th class="p-3 font-semibold">Jam</th>
               <th class="p-3 font-semibold">Status</th>
-              <th class="p-3 font-semibold">Keterangan</th>
-              <th class="p-3 font-semibold text-center w-[130px]">Aksi</th>
+              <th class="p-3 font-semibold text-center w-[180px]">Aksi</th>
             </tr>
           </thead>
-
           <tbody>
             <tr
-              v-for="r in reservationsList"
+              v-for="r in filteredReservations"
               :key="r.id"
-              class="border-t hover:bg-indigo-50/40 transition duration-150"
+              class="border-t hover:bg-gray-50 transition"
             >
-              <td class="p-3 text-gray-800 font-medium">{{ r.user?.name }}</td>
-              <td class="p-3 text-gray-600">{{ r.room?.name }}</td>
-              <td class="p-3 text-gray-600">{{ r.date }}</td>
-              <td class="p-3 capitalize text-gray-600">{{ r.day_of_week }}</td>
-              <td class="p-3 text-gray-600">{{ r.start_time }} - {{ r.end_time || r.start_time }}</td>
+              <td class="p-3 text-gray-700">{{ r.date }}</td>
+              <td class="p-3 text-gray-700">{{ r.room?.name || r.room?.nama_ruangan || '-' }}</td>
+              <td class="p-3 text-gray-700">
+                {{ r.start_time }} - {{ r.end_time || r.start_time }}
+              </td>
               <td class="p-3">
                 <span
-                  v-if="r.status === 'approved'"
-                  class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700"
-                  >Approved</span
+                  :class="{
+                    'bg-green-600': r.status === 'approved',
+                    'bg-red-600': r.status === 'rejected',
+                    'bg-gray-400': r.status === 'pending',
+                  }"
+                  class="text-white text-xs px-3 py-1 rounded-full"
                 >
-                <span
-                  v-else-if="r.status === 'rejected'"
-                  class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
-                  >Rejected</span
-                >
-                <span
-                  v-else
-                  class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600"
-                  >Pending</span
-                >
+                  {{ getStatusLabel(r.status) }} 
+                </span>
               </td>
-              <td class="p-3 text-sm text-gray-500">{{ r.reason || '-' }}</td>
 
-              <!-- Aksi -->
-              <td class="p-3 text-center">
+              <td class="p-3 text-center relative">
                 <div class="flex justify-center items-center gap-2">
-                  <!-- Approve -->
-                  <button
-                    @click="openModal(r.id, 'approved')"
-                    class="p-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 hover:scale-105 transition-all duration-150 shadow-sm"
-                    title="Setujui"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </button>
+                  <template v-if="r.status === 'pending'">
+                    <button
+                      @click="openModal(r.id, 'approved', r.date)"
+                      class="bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700 transition"
+                    >
+                      Setujui
+                    </button>
 
-                  <!-- Reject -->
-                  <button
-                    @click="openModal(r.id, 'rejected')"
-                    class="p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 hover:scale-105 transition-all duration-150 shadow-sm"
-                    title="Tolak"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                    <button
+                      @click="openModal(r.id, 'rejected', r.date)"
+                      class="bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 transition"
+                    >
+                      Tolak
+                    </button>
+                  </template>
 
-                  <!-- Delete -->
-                  <button
-                    @click="remove(r.id)"
-                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 transition-all duration-150 shadow-sm"
-                    title="Hapus"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 
-                        0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 
-                        0 00-1-1h-4a1 1 0 00-1 1v3m-4 0h14" />
-                    </svg>
-                  </button>
+                  <template v-else>
+                    <div class="relative">
+                      <button
+                        @click="toggleDropdown(r.id)"
+                        class="bg-gray-500 text-white px-3 py-1 rounded-full hover:bg-gray-600 transition"
+                      >
+                        Ubah Status
+                      </button>
+
+                       <transition name="fade">
+                        <div
+                          v-if="openDropdown === r.id"
+                          class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-20"
+                        >
+                          <button
+                            v-for="option in statusOptions"
+                            :key="option.value"
+                            @click="confirmChangeStatus(r, option.value)"
+                            class="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
+                          >
+                            {{ option.label }}
+                          </button>
+                        </div>
+                      </transition>
+                    </div>
+                  </template>
                 </div>
               </td>
             </tr>
@@ -132,28 +138,64 @@
         </table>
       </div>
 
+      <!-- Empty -->
+      <div
+        v-else
+        class="bg-white rounded-2xl shadow-lg p-10 text-center text-gray-500 border border-gray-200"
+      >
+        <p class="text-lg font-medium">Belum ada reservasi ditemukan</p>
+      </div>
+
       <!-- Modal -->
       <transition name="fade">
-        <div v-if="modal.open" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all animate-fadeIn"
-          >
+        <div
+          v-if="modal.open"
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <h3 class="text-xl font-bold mb-3 text-gray-800">
-              {{ modal.status === 'approved' ? 'Setujui Reservasi' : 'Tolak Reservasi' }}
+              {{
+                modal.status === "approved"
+                  ? "Setujui Reservasi"
+                  : modal.status === "rejected"
+                  ? "Tolak Reservasi"
+                  : "Ubah Status Reservasi"
+              }}
             </h3>
+
             <p class="text-sm text-gray-500 mb-4">
-              {{ modal.status === 'approved'
-                ? 'Tambahkan catatan jika diperlukan (opsional).'
-                : 'Tulis alasan penolakan secara singkat.' }}
+              {{
+                modal.status === "approved"
+                  ? "Tambahkan catatan jika diperlukan (opsional)."
+                  : modal.status === "rejected"
+                  ? "Tulis alasan penolakan secara singkat."
+                  : "Pilih status baru untuk reservasi ini."
+              }}
             </p>
+
+            <template v-if="modal.status === 'change'">
+              <select
+                v-model="modal.newStatus"
+                class="w-full border border-gray-300 rounded-lg p-2 mb-4 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+              >
+                <option disabled value="">Pilih Status Baru</option>
+                <option value="approved">Disetujui</option>
+                <option value="pending">Menunggu</option>
+                <option value="rejected">Ditolak</option>
+              </select>
+            </template>
 
             <textarea
               v-model="modal.reason"
               rows="3"
               class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-200 focus:outline-none mb-4"
-              :placeholder="modal.status === 'approved'
-                ? 'Opsional...'
-                : 'Tulis alasan penolakan...'"
+              :placeholder="
+                modal.status === 'approved'
+                  ? 'Opsional...'
+                  : modal.status === 'rejected'
+                  ? 'Tulis alasan penolakan...'
+                  : 'Tambahkan catatan jika perlu...'
+              "
             ></textarea>
 
             <div class="flex justify-end gap-3">
@@ -166,11 +208,21 @@
               <button
                 @click="submitModal"
                 class="px-4 py-2 rounded-lg text-white font-semibold transition"
-                :class="modal.status === 'approved'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'"
+                :class="
+                  modal.status === 'approved'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : modal.status === 'rejected'
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-gray-600 hover:bg-gray-700'
+                "
               >
-                {{ modal.status === 'approved' ? 'Setujui' : 'Tolak' }}
+                {{
+                  modal.status === "approved"
+                    ? "Setujui"
+                    : modal.status === "rejected"
+                    ? "Tolak"
+                    : "Simpan Perubahan"
+                }}
               </button>
             </div>
           </div>
@@ -181,66 +233,196 @@
 </template>
 
 <script setup>
-import { reservations } from '@/api/reservations'
-import { ref, onMounted } from 'vue'
+import { reservations } from "@/api/reservations";
+import axios from "axios";
+import { ref, computed, onMounted } from "vue";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import Swal from "sweetalert2";
 
-const reservationsList = ref([])
-const modal = ref({ open: false, id: null, status: null, reason: '' })
+const reservationsList = ref([]);
+const roomOptions = ref([]);
+const selectedRoom = ref("");
+const selectedStatus = ref("");
+const selectedDate = ref("");
+const openDropdown = ref(null);
+const modal = ref({
+  open: false,
+  id: null,
+  status: null,
+  reason: "",
+  newStatus: "",
+  date: "",
+});
+
+const statusOptions = [
+  { value: "approved", label: "Disetujui" },
+  { value: "pending", label: "Menunggu" },
+  { value: "rejected", label: "Ditolak" },
+];
+
+function getStatusLabel(status) {
+  if (status === "approved") return "Disetujui";
+  if (status === "rejected") return "Ditolak";
+  return "Menunggu";
+}
 
 async function fetchData() {
   try {
-    const res = await reservations.all()
-    reservationsList.value = res.data?.data ?? res.data
+    Swal.showLoading();
+    const token = localStorage.getItem("token");
+    const res = await reservations.all({ per_page: 9999 });
+    reservationsList.value = res.data?.data ?? res.data;
+
+    const roomRes = await axios.get("http://localhost:8000/api/rooms", {
+      params: { per_page: 9999 },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    roomOptions.value = roomRes.data?.data ?? [];
+    Swal.close();
   } catch (e) {
-    console.error(e)
-    alert('Gagal mengambil data reservasi.')
+    console.error("Error ambil data:", e);
+    Swal.fire("Gagal", "Gagal mengambil data reservasi atau ruangan.", "error");
   }
 }
 
-function openModal(id, status) {
-  modal.value = { open: true, id, status, reason: '' }
+const filteredReservations = computed(() =>
+  reservationsList.value.filter((r) => {
+    const matchRoom = selectedRoom.value ? r.room?.id === selectedRoom.value : true;
+    const matchStatus = selectedStatus.value ? r.status === selectedStatus.value : true;
+    const matchDate = selectedDate.value ? r.date === selectedDate.value : true;
+    return matchRoom && matchStatus && matchDate;
+  })
+);
+
+async function exportReport() {
+  if (!filteredReservations.value.length) {
+    Swal.fire("Info", "Tidak ada data untuk diekspor!", "info");
+    return;
+  }
+
+  Swal.fire({
+    title: "Memproses...",
+    text: "Mempersiapkan laporan untuk diunduh.",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
+  const exportData = filteredReservations.value.map((r) => ({
+    Tanggal: r.date,
+    Ruangan: r.room?.name || r.room?.nama_ruangan || "-",
+    Jam: `${r.start_time} - ${r.end_time || r.start_time}`,
+    Status: getStatusLabel(r.status),
+    Catatan: r.reason || "-",
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Reservasi");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const fileName = `Laporan_Reservasi_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  saveAs(new Blob([excelBuffer], { type: "application/octet-stream" }), fileName);
+
+  Swal.fire("Berhasil", "Laporan berhasil diekspor!", "success");
 }
 
+// Dropdown
+function toggleDropdown(id) {
+  openDropdown.value = openDropdown.value === id ? null : id;
+}
+
+function openModal(id, status, date) {
+  modal.value = { open: true, id, status, reason: "", newStatus: "", date };
+}
 function closeModal() {
-  modal.value.open = false
+  modal.value.open = false;
 }
 
 async function submitModal() {
-  const { id, status, reason } = modal.value
+  const { id, status, reason, newStatus, date } = modal.value;
+  const today = new Date().toISOString().split("T")[0];
+
+  if (date < today) {
+    Swal.fire("Tidak Bisa", "Reservasi yang sudah terlewat tidak dapat diubah.", "error");
+    closeModal();
+    return;
+  }
+
+  Swal.fire({
+    title: "Memproses...",
+    text: "Mohon tunggu sebentar.",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
   try {
-    if (status === 'approved') {
-      await reservations.approve(id, reason || '')
-      alert('Reservasi disetujui!')
-    } else if (status === 'rejected') {
+    if (status === "approved") {
+      await reservations.approve(id, reason || "");
+      Swal.fire("Berhasil", "Reservasi disetujui!", "success");
+    } else if (status === "rejected") {
       if (!reason) {
-        alert('Alasan wajib diisi untuk menolak!')
-        return
+        Swal.fire("Perhatian", "Alasan wajib diisi untuk menolak!", "warning");
+        return;
       }
-      await reservations.reject(id, reason)
-      alert('Reservasi ditolak!')
+      await reservations.reject(id, reason);
+      Swal.fire("Berhasil", "Reservasi ditolak!", "success");
+    } else if (status === "change") {
+      await axios.put(`/api/reservations/${id}/status`, { status: newStatus, reason });
+      Swal.fire("Berhasil", "Status reservasi berhasil diubah!", "success");
     }
-    closeModal()
-    fetchData()
+    closeModal();
+    fetchData();
   } catch (e) {
-    console.error(e)
-    alert('Gagal memproses reservasi.')
+    console.error(e);
+    Swal.fire("Gagal", "Gagal memproses reservasi.", "error");
   }
 }
 
-async function remove(id) {
-  if (confirm('Yakin ingin menghapus reservasi ini?')) {
-    try {
-      await reservations.destroy(id)
-      alert('Reservasi berhasil dihapus!')
-      fetchData()
-    } catch (e) {
-      console.error(e)
-      alert('Gagal menghapus reservasi.')
+function confirmChangeStatus(reservation, newStatus) {
+  const today = new Date().toISOString().split("T")[0];
+  if (reservation.date < today) {
+    Swal.fire("Tidak Bisa", "Reservasi yang sudah terlewat tidak dapat diubah.", "error");
+    return;
+  }
+
+  Swal.fire({
+    title: "Yakin ubah status?",
+    text: `Ubah status menjadi "${getStatusLabel(newStatus)}"?`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Ya, ubah!",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Memproses...",
+        text: "Mohon tunggu sebentar.",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      axios
+        .put(`/api/reservations/${reservation.id}/status`, {
+          status: newStatus,
+          reason: reservation.reason || "",
+        })
+        .then(() => {
+          Swal.fire("Berhasil", "Status berhasil diubah!", "success");
+          fetchData();
+        })
+        .catch(() => Swal.fire("Gagal", "Gagal mengubah status.", "error"));
     }
-  }
+  });
+  openDropdown.value = null;
 }
 
-onMounted(fetchData)
+onMounted(fetchData);
 </script>
 
 <style>
@@ -252,17 +434,8 @@ onMounted(fetchData)
 .fade-leave-to {
   opacity: 0;
 }
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+th,
+td {
+  text-align: left;
 }
 </style>
